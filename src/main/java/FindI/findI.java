@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-public class findIMax {
+public class findI {
     private Vector<Double> x;
     private Vector<Double> y;
     public List<Peak> peaks = new ArrayList<>();
 
-    public findIMax(Vector<Double> x, Vector<Double> y) {
+    public findI(Vector<Double> x, Vector<Double> y) {
         this.x = x;
         this.y = y;
         findPeaks();
@@ -25,15 +25,17 @@ public class findIMax {
                 if ((1 - Math.abs(x.get(i) / x.get(i + Params.FREQUENCY - 1))) * 100 < Params.PERCENT) {
                     peak_started = false;
                     if (depth != 0) {
-                        System.out.println("bottom " + y.get(i));
-                        Params.FREQUENCY = oldFreq;
+                        System.out.println("bottom " + i + ' ' + y.get(i));
+                        //Params.FREQUENCY = oldFreq;
                         depth = 0;
                     }
                 } else {
+                    System.out.println("percent " + (1 - Math.abs(x.get(i) / x.get(i + Params.FREQUENCY - 1))) * 100);
                     if (!peak_started) {
                         peak_started = true;
+                        System.out.println(i);
                         System.out.println(y.get(i));
-                        Params.FREQUENCY = Params.FREQUENCY - 10;
+                       // Params.FREQUENCY = Params.FREQUENCY - 10;
                         possible_peaks++;
                     }
                     depth += x.get(i + 69) - x.get(i);
