@@ -15,10 +15,6 @@ public class Peak {
         this.y = y;
     }
     private void findEndPosition(){
-        for(int i = indexBeginning; i < x.size(); i++){
-            while (x.get(i) != maxPoint){
-                continue;
-            }
-        }
+
     }
 }

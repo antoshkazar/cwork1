@@ -3,6 +3,7 @@ import graphicForm.graphicJDialog;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import java.awt.*;
 import java.io.*;
 import java.util.Vector;
@@ -19,9 +20,13 @@ public class MainForm extends JDialog {
     private JTable idealsTable;
     private JTextArea nameArea;
     private JButton addRowButton;
+    private JButton removeButton;
+    private JButton clearButton;
+    private JButton saveButton;
+    private JButton returnButton;
     private JButton buttonCancel;
     File fileWithDataName = null;
-    boolean graphicOpened = false;
+    boolean graphicOpened = false, cleared = false;
     Vector<Double> x = new Vector<>();
     Vector<Double> y = new Vector<>();
     graphicJDialog secform;
@@ -52,10 +57,40 @@ public class MainForm extends JDialog {
             getFileData(); //TODO УБРАТЬ
             graphic();
         });
-        addRowButton.addActionListener(e -> {
-            addRow();
+        addRowButton.addActionListener(e -> addRow());
+        removeButton.addActionListener(e -> removeRow());
+        clearButton.addActionListener(e -> clearTable());
+        saveButton.addActionListener(e -> exportToCSV());
+        returnButton.addActionListener(e -> {
+            clearTable();
+            addRows();
         });
         makeTable();
+    }
+
+    private void clearTable() {
+        try {
+            if (modelIdeal == null) {
+            } else {
+                modelIdeal.setRowCount(0);
+                cleared = true;
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Ошибка " + e.getMessage());
+        }
+    }
+
+    private void removeRow() {
+        try {
+            if (modelIdeal == null) {
+            } else {
+                modelIdeal.removeRow(modelIdeal.getRowCount() - 1);
+            }
+        } catch (IndexOutOfBoundsException e) {
+            JOptionPane.showMessageDialog(this, "Этот ряд нельзя удалить!");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Ошибка " + e.getMessage());
+        }
     }
 
     private void addRow() {
@@ -65,12 +100,12 @@ public class MainForm extends JDialog {
                 String input = JOptionPane.showInputDialog("Введите строку для таблицы, разделяя столбцы знаком \"/\"");
                 Object[] arrInput = input.split("/");
                 Integer.parseInt((String) arrInput[0]);
-                if(((String)arrInput[2]).contains("-")){
-                    var range = ((String)arrInput[2]).split("-");
+                if (((String) arrInput[2]).contains("-")) {
+                    var range = ((String) arrInput[2]).split("-");
                     Integer.parseInt(range[0]);
                     Integer.parseInt(range[1]);
                 }
-                if (arrInput.length < 4 ) {
+                if (arrInput.length < 4) {
                     throw new Exception();
                 }
                 modelIdeal.addRow(arrInput);
@@ -80,45 +115,81 @@ public class MainForm extends JDialog {
         }
     }
 
+    private boolean exportToCSV() {
+        try {
+            //TableModel modelIdeal = tableToExport.getModel();
+            FileWriter csv = new FileWriter(new File("saved.csv"));
+            for (int i = 0; i < modelIdeal.getColumnCount(); i++) {
+                csv.write(modelIdeal.getColumnName(i) + ",");
+            }
+
+            csv.write("\n");
+
+            for (int i = 0; i < modelIdeal.getRowCount(); i++) {
+                for (int j = 0; j < modelIdeal.getColumnCount(); j++) {
+                    csv.write(modelIdeal.getValueAt(i, j).toString() + ",");
+                }
+                csv.write("\n");
+            }
+            csv.close();
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private void addRows() {
+        try {
+            if (cleared) {
+                Object[] row = new Object[]{"1", "ν(OH)", "3600-3700",
+                        "Кислотные ОН-группы мостиковых гидроксилов Al-OH-O или Si-OH-Al (центры Бренстеда)"};
+                modelIdeal.addRow(row);
+                row = new Object[]{"2", "v(OH)", "3200-3600", "ОН-группы каркасных Si-OH группировок," +
+                        " либо молекулы H2O"};
+                modelIdeal.addRow(row);
+                row = new Object[]{"3", "νas(CH2) или νs(CH3) или ν??(CH2) или δ(CH3)", "2855",
+                        "Остатки органического темплата (TPAOH) в полостях каркаса TS " +
+                                "(асимметричные –CH2, симметричные –CH3 и растягивающие –CH2 колебания;" +
+                                " деформационные колебания –CH3)"};
+                modelIdeal.addRow(row);
+                row = new Object[]{"3", "νas(CH2) или νs(CH3) или ν??(CH2) или δ(CH3)", "2930-2960",
+                        "Остатки органического темплата (TPAOH) в полостях каркаса TS " +
+                                "(асимметричные –CH2, симметричные –CH3 и растягивающие –CH2 колебания;" +
+                                " деформационные колебания –CH3)"};
+                modelIdeal.addRow(row);
+                row = new Object[]{"4", "ν(CO2)", "2300", "Сорбированные молекулы CO2 в порах " +
+                        "с наибольшими размерами на поверхности"};
+                modelIdeal.addRow(row);
+                row = new Object[]{"5", "δ H–O–H", "1630-1635", "-Деформационные колебания H–O–H"};
+                modelIdeal.addRow(row);
+                row = new Object[]{"6", "νas(ТO4)", "1225-1230", "Асимметричные валентные колебания внутри TS"};
+                modelIdeal.addRow(row);
+                row = new Object[]{"7", "νas(ТO4)", "1108-1110", "Асимметричные валентные колебания внутри тетраэдров ТO4"};
+                modelIdeal.addRow(row);
+                row = new Object[]{"8", " ", "960 - 970", "Титан в каркасе TS"};
+                modelIdeal.addRow(row);
+                row = new Object[]{"9", "νs(ТO4)", "800", "Симметричные валентные колебания внутри тетраэдров ТO4"};
+                modelIdeal.addRow(row);
+                row = new Object[]{"10", "νs(SiOSi)+δ(OSiO), ν(Al-OH)", "550", "Указывает на принадлежность цеолита к семейству ZSM"};
+                modelIdeal.addRow(row);
+                row = new Object[]{"11", "δ(TO4)", "450", "Деформационные колебания связей Т–O"};
+                modelIdeal.addRow(row);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
+    }
+
     private void makeTable() {
         modelIdeal = (DefaultTableModel) idealsTable.getModel();
         modelIdeal.addColumn("ЭТАЛОНЫ");
         modelIdeal.addColumn("v");
         modelIdeal.addColumn("см^(-1)");
         modelIdeal.addColumn("Отнесение полос");
-        Object[] row = new Object[]{"1", "ν(OH)", "3600-3700",
-                "Кислотные ОН-группы мостиковых гидроксилов Al-OH-O или Si-OH-Al (центры Бренстеда)"};
-        modelIdeal.addRow(row);
-        row = new Object[]{"2", "v(OH)", "3200-3600", "ОН-группы каркасных Si-OH группировок," +
-                " либо молекулы H2O"};
-        modelIdeal.addRow(row);
-        row = new Object[]{"3", "νas(CH2) или νs(CH3) или ν??(CH2) или δ(CH3)", "2855",
-                "Остатки органического темплата (TPAOH) в полостях каркаса TS " +
-                        "(асимметричные –CH2, симметричные –CH3 и растягивающие –CH2 колебания;" +
-                        " деформационные колебания –CH3)"};
-        modelIdeal.addRow(row);
-        row = new Object[]{"3", "νas(CH2) или νs(CH3) или ν??(CH2) или δ(CH3)", "2930-2960",
-                "Остатки органического темплата (TPAOH) в полостях каркаса TS " +
-                        "(асимметричные –CH2, симметричные –CH3 и растягивающие –CH2 колебания;" +
-                        " деформационные колебания –CH3)"};
-        modelIdeal.addRow(row);
-        row = new Object[]{"4", "ν(CO2)", "2300", "Сорбированные молекулы CO2 в порах " +
-                "с наибольшими размерами на поверхности"};
-        modelIdeal.addRow(row);
-        row = new Object[]{"5", "δ H–O–H", "1630-1635", "-Деформационные колебания H–O–H"};
-        modelIdeal.addRow(row);
-        row = new Object[]{"6", "νas(ТO4)", "1225-1230", "Асимметричные валентные колебания внутри TS"};
-        modelIdeal.addRow(row);
-        row = new Object[]{"7", "νas(ТO4)", "1108-1110", "Асимметричные валентные колебания внутри тетраэдров ТO4"};
-        modelIdeal.addRow(row);
-        row = new Object[]{"8", " ", "960 - 970", "Титан в каркасе TS"};
-        modelIdeal.addRow(row);
-        row = new Object[]{"9", "νs(ТO4)", "800", "Симметричные валентные колебания внутри тетраэдров ТO4"};
-        modelIdeal.addRow(row);
-        row = new Object[]{"10", "νs(SiOSi)+δ(OSiO), ν(Al-OH)", "550", "Указывает на принадлежность цеолита к семейству ZSM"};
-        modelIdeal.addRow(row);
-        row = new Object[]{"11", "δ(TO4)", "450", "Деформационные колебания связей Т–O"};
-        modelIdeal.addRow(row);
+        cleared = true;
+        addRows();
+        cleared = false;
     }
 
     private void graphic() {

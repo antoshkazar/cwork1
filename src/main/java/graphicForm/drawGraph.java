@@ -1,6 +1,8 @@
 package graphicForm;
 
 import java.awt.*;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.Vector;
 
 import org.jfree.chart.ChartFactory;
@@ -24,10 +26,6 @@ public class drawGraph {
         this.filename = filename;
         this.okextremumsX = okextremumsX;
         this.okextremumsY = okextremumsY;
-    }
-
-    public void recieveExtremums(Vector<Double> okextremumsX, Vector<Double> okextremumsY) {
-
     }
 
     public XYDataset createDataset() {
