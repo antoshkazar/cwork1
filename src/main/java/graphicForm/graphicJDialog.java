@@ -1,5 +1,6 @@
 package graphicForm;
 
+import FindI.findI;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.ui.RectangleInsets;
@@ -19,8 +20,13 @@ public class graphicJDialog extends JDialog {
         this.filename = filename;
         this.setLocation(100, 100);
         setTitle("Graph");
+        graphic();
+    }
+
+    public void graphic() {
         try {
-            drawGraph d = new drawGraph(x, y, filename);
+            findI f = new findI(x, y);
+            drawGraph d = new drawGraph(x, y, filename, f.getOkextremumsX(),f.getOkextremumsY());
             var dataset = d.createDataset();
             if (dataset == null) {
                 JOptionPane.showMessageDialog(this, "Не удалось построить график!");

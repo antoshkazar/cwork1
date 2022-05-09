@@ -3,9 +3,6 @@ import graphicForm.graphicJDialog;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 import java.awt.*;
 import java.io.*;
 import java.util.Vector;
@@ -64,11 +61,16 @@ public class MainForm extends JDialog {
     private void addRow() {
         try {
             if (modelIdeal == null) {
-                return;
             } else {
                 String input = JOptionPane.showInputDialog("Введите строку для таблицы, разделяя столбцы знаком \"/\"");
                 Object[] arrInput = input.split("/");
-                if (arrInput.length < 4) {
+                Integer.parseInt((String) arrInput[0]);
+                if(((String)arrInput[2]).contains("-")){
+                    var range = ((String)arrInput[2]).split("-");
+                    Integer.parseInt(range[0]);
+                    Integer.parseInt(range[1]);
+                }
+                if (arrInput.length < 4 ) {
                     throw new Exception();
                 }
                 modelIdeal.addRow(arrInput);
@@ -80,7 +82,7 @@ public class MainForm extends JDialog {
 
     private void makeTable() {
         modelIdeal = (DefaultTableModel) idealsTable.getModel();
-        modelIdeal.addColumn("Эталоны");
+        modelIdeal.addColumn("ЭТАЛОНЫ");
         modelIdeal.addColumn("v");
         modelIdeal.addColumn("см^(-1)");
         modelIdeal.addColumn("Отнесение полос");

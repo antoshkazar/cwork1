@@ -15,11 +15,19 @@ public class drawGraph {
     Vector<Double> x;
     Vector<Double> y;
     String filename;
+    Vector<Double> okextremumsX;
+    Vector<Double> okextremumsY;
 
-    public drawGraph(Vector<Double> x, Vector<Double> y, String filename) {
+    public drawGraph(Vector<Double> x, Vector<Double> y, String filename, Vector<Double> okextremumsX, Vector<Double> okextremumsY) {
         this.x = x;
         this.y = y;
         this.filename = filename;
+        this.okextremumsX = okextremumsX;
+        this.okextremumsY = okextremumsY;
+    }
+
+    public void recieveExtremums(Vector<Double> okextremumsX, Vector<Double> okextremumsY) {
+
     }
 
     public XYDataset createDataset() {
@@ -28,8 +36,13 @@ public class drawGraph {
             for (int i = 0; i < x.size(); i++) {
                 xySeries.add(y.get(i), x.get(i));
             }
+            XYSeries xySeries1 = new XYSeries("Фон");
+            for (int i = 0; i < okextremumsY.size(); i++) {
+                xySeries1.add(okextremumsY.get(i), okextremumsX.get(i));
+            }
             XYSeriesCollection dataset = new XYSeriesCollection();
             dataset.addSeries(xySeries);
+            dataset.addSeries(xySeries1);
             return dataset;
         } catch (Exception e) {
             e.printStackTrace();
