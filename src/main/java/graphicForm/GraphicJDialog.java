@@ -1,6 +1,6 @@
 package graphicForm;
 
-import FindI.findI;
+import FindI.FindIntensity;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.ui.RectangleInsets;
@@ -9,12 +9,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Vector;
 
-public class graphicJDialog extends JDialog {
+public class GraphicJDialog extends JDialog {
     Vector<Double> x;
     Vector<Double> y;
     String filename;
 
-    public graphicJDialog(Vector<Double> x, Vector<Double> y, String filename) {
+    public GraphicJDialog(Vector<Double> x, Vector<Double> y, String filename) {
         this.x = x;
         this.y = y;
         this.filename = filename;
@@ -25,9 +25,9 @@ public class graphicJDialog extends JDialog {
 
     public void graphic() {
         try {
-            findI f = new findI(x, y);
-            drawGraph d = new drawGraph(x, y, filename, f.getOkextremumsX(),f.getOkextremumsY());
-            var dataset = d.createDataset();
+            FindIntensity f = new FindIntensity(x, y);
+            DrawGraph d = new DrawGraph(x, y, filename, f.getOkExtremumsX(), f.getOkExtremumsY());
+            var dataset = d.createDataset(f.getPeaks());
             if (dataset == null) {
                 JOptionPane.showMessageDialog(this, "Не удалось построить график!");
                 this.dispose();
@@ -43,7 +43,7 @@ public class graphicJDialog extends JDialog {
             ChartPanel panel = new ChartPanel(chart);
             panel.setFillZoomRectangle(true);
             panel.setMouseWheelEnabled(true);
-            panel.setPreferredSize(new Dimension(800, 600));
+            panel.setPreferredSize(new Dimension(900, 700));
             add(panel);
             this.pack();
         } catch (Exception e) {

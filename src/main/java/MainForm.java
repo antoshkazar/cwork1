@@ -1,9 +1,8 @@
 import FindI.*;
-import graphicForm.graphicJDialog;
+import graphicForm.GraphicJDialog;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 import java.awt.*;
 import java.io.*;
 import java.util.Vector;
@@ -11,7 +10,6 @@ import java.util.Vector;
 
 public class MainForm extends JDialog {
     private JPanel contentPane;
-    private JTextField fileName;
     private JButton chooseFileButton;
     private JButton graphicButton;
     private JButton peaksButton;
@@ -24,25 +22,19 @@ public class MainForm extends JDialog {
     private JButton clearButton;
     private JButton saveButton;
     private JButton returnButton;
-    private JButton buttonCancel;
-    File fileWithDataName = null;
-    boolean graphicOpened = false, cleared = false;
+    File fileWithData = null;
+    boolean graphicOpened = false, cleared = false,
+            firstTimeOpened = true;
     Vector<Double> x = new Vector<>();
     Vector<Double> y = new Vector<>();
-    graphicJDialog secform;
+    GraphicJDialog secForm;
 
     public MainForm() {
-        //setVisible(false);
-        //setSize(600,600);
         setLocationRelativeTo(null);
-        //setResizable(false);
-        //contentPane.setSize(500,500);
         setContentPane(contentPane);
         setModal(true);
-        //graphicPanel.setSize(10000,10000);
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         getRootPane().setDefaultButton(chooseFileButton);
-        //setModal(true);
         addListeners();
     }
 
@@ -50,7 +42,7 @@ public class MainForm extends JDialog {
         chooseFileButton.setText("Выберите файл");
         chooseFileButton.addActionListener(e -> chooseFileButtonPressed());
         peaksButton.addActionListener(e -> {
-            findI f = new findI(x, y);
+            FindIntensity f = new FindIntensity(x, y);
         });
         graphicButton.setText("Показать/скрыть график");
         graphicButton.addActionListener(e -> {
@@ -70,8 +62,7 @@ public class MainForm extends JDialog {
 
     private void clearTable() {
         try {
-            if (modelIdeal == null) {
-            } else {
+            if (modelIdeal != null) {
                 modelIdeal.setRowCount(0);
                 cleared = true;
             }
@@ -82,8 +73,7 @@ public class MainForm extends JDialog {
 
     private void removeRow() {
         try {
-            if (modelIdeal == null) {
-            } else {
+            if (modelIdeal != null) {
                 modelIdeal.removeRow(modelIdeal.getRowCount() - 1);
             }
         } catch (IndexOutOfBoundsException e) {
@@ -95,8 +85,7 @@ public class MainForm extends JDialog {
 
     private void addRow() {
         try {
-            if (modelIdeal == null) {
-            } else {
+            if (modelIdeal != null) {
                 String input = JOptionPane.showInputDialog("Введите строку для таблицы, разделяя столбцы знаком \"/\"");
                 Object[] arrInput = input.split("/");
                 Integer.parseInt((String) arrInput[0]);
@@ -117,14 +106,11 @@ public class MainForm extends JDialog {
 
     private boolean exportToCSV() {
         try {
-            //TableModel modelIdeal = tableToExport.getModel();
             FileWriter csv = new FileWriter(new File("saved.csv"));
             for (int i = 0; i < modelIdeal.getColumnCount(); i++) {
                 csv.write(modelIdeal.getColumnName(i) + ",");
             }
-
             csv.write("\n");
-
             for (int i = 0; i < modelIdeal.getRowCount(); i++) {
                 for (int j = 0; j < modelIdeal.getColumnCount(); j++) {
                     csv.write(modelIdeal.getValueAt(i, j).toString() + ",");
@@ -195,13 +181,20 @@ public class MainForm extends JDialog {
     private void graphic() {
         try {
             if (!graphicOpened) {
-                secform = new graphicJDialog(x, y, "TS-1P.dat"); //TODO ПОМЕНЯТЬ НА ВЫБРАННЫЙ ГРАФИК
-                secform.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-                secform.setResizable(true);
-                secform.setVisible(true);
-                graphicOpened = true;
+                if(firstTimeOpened) {
+                    secForm = new GraphicJDialog(x, y, "TS-1P75.dat"); //TODO ПОМЕНЯТЬ НА ВЫБРАННЫЙ ГРАФИК
+                    secForm.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+                    secForm.setResizable(true);
+                    secForm.setVisible(true);
+                    graphicOpened = true;
+                    firstTimeOpened = false;
+                } else {
+                    graphicOpened = true;
+                    secForm.setResizable(true);
+                    secForm.setVisible(true);
+                }
             } else {
-                secform.dispose();
+                secForm.setVisible(false);
                 graphicOpened = false;
             }
         } catch (Exception e) {
@@ -213,7 +206,7 @@ public class MainForm extends JDialog {
         //if (fileWithDataName != null) {
         try {
             //FileReader fr = new FileReader(fileWithDataName); //TODO исправить на получение файла из указанной директории
-            FileReader fr = new FileReader("src/main/java/TS-1P.dat");
+            FileReader fr = new FileReader("src/main/java/TS-1P75.dat");
             BufferedReader reader = new BufferedReader(fr);
             String line = reader.readLine();
             while (line != null) {
@@ -240,8 +233,8 @@ public class MainForm extends JDialog {
             jFileChooser.setDialogTitle("Выбор директории");
             jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
             int result = jFileChooser.showOpenDialog(this);
-            fileWithDataName = jFileChooser.getSelectedFile();
-            nameArea.setText("Выбранный файл:\n" + fileWithDataName.getName());
+            fileWithData = jFileChooser.getSelectedFile();
+            nameArea.setText("Выбранный файл:\n" + fileWithData.getName());
             getFileData();
         } catch (Exception e) {
             e.printStackTrace();
