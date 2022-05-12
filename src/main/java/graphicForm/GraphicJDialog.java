@@ -13,6 +13,11 @@ public class GraphicJDialog extends JDialog {
     Vector<Double> x;
     Vector<Double> y;
     String filename;
+    FindIntensity f;
+
+    public FindIntensity getF() {
+        return f;
+    }
 
     public GraphicJDialog(Vector<Double> x, Vector<Double> y, String filename) {
         this.x = x;
@@ -25,7 +30,7 @@ public class GraphicJDialog extends JDialog {
 
     public void graphic() {
         try {
-            FindIntensity f = new FindIntensity(x, y);
+            f = new FindIntensity(x, y);
             DrawGraph d = new DrawGraph(x, y, filename, f.getOkExtremumsX(), f.getOkExtremumsY());
             var dataset = d.createDataset(f.getPeaks());
             if (dataset == null) {

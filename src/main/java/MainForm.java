@@ -59,6 +59,12 @@ public class MainForm extends JDialog {
         });
         makeTable();
     }
+    /*
+    private JTable makeCompareTable(){
+        try {
+            var peaks = secForm.getF().getPeaks();
+        }
+    }*/
 
     private void clearTable() {
         try {

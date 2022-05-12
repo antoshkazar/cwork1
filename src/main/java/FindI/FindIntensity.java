@@ -74,10 +74,10 @@ public class FindIntensity {
             positions.add(0);
             for (int i = 0; i < okExtremumsX.size() - 1; i++) {
                 double minElem = Double.MAX_VALUE, maxElem = Double.MIN_VALUE;
-                int posMin, posMax;
+                int posMin = 0, posMax = 0;
                 trendDown = x.get(okPositions.get(i)) >= x.get(okPositions.get(i) + 1);
                 //System.out.println( x.get(okPositions.get(i)).toString() + " " +   x.get((okPositions.get(i) +1)));
-                System.out.println(trendDown);
+               // System.out.println(trendDown);
                 for (int j = okPositions.get(i) + 1; j < okPositions.get(i + 1); j++) {
                     if (trendDown) {
                         if (x.get(j) < minElem) {
@@ -92,23 +92,24 @@ public class FindIntensity {
                     }
                 }
                 if (trendDown) {
-                    System.out.println(okExtremumsY.get(i)+ " min " + minElem);
+                    System.out.println(okPositions.get(i) + " min " + minElem + " pos " + posMin);
                     if (okExtremumsX.get(i) - minElem > 0.005 && okExtremumsY.get(i + 1) - okExtremumsY.get(i) < 1000) {
                         // System.out.println("min " + y.get(positions.get(i)));
                         positions.add(okPositions.get(i));
-                        peaks.add(new Peak(okPositions.get(i + 1), okPositions.get(i), minElem, true, x, y));
+                        peaks.add(new Peak(okPositions.get(i + 1), okPositions.get(i), posMin, minElem, true, x, y));
                     }
                 } else {
-                    System.out.println(okExtremumsX.get(i) + " max " + maxElem);
+                    // System.out.println(okExtremumsX.get(i) + " max " + maxElem);
                     if (maxElem - okExtremumsX.get(i) > 0.005 && okExtremumsY.get(i + 1) - okExtremumsY.get(i) < 1000) {
                         positions.add(okPositions.get(i));
-                        peaks.add(new Peak(okPositions.get(i + 1), okPositions.get(i), maxElem, false, x, y));
+                        peaks.add(new Peak(okPositions.get(i + 1), okPositions.get(i), posMax, maxElem, false, x, y));
                     }
                 }
             }
-            System.out.println(positions.size());
+            // System.out.println(positions.size());
             for (var peak : peaks) {
-                System.out.println(y.get(peak.indexBeginning) + " " + y.get(peak.indexEnd));
+                System.out.println(y.get(peak.indexBeginning) + " " + peak.depth);
+                // System.out.println(y.get(peak.indexBeginning) + " " + y.get(peak.indexEnd));
             }
             /*
             System.out.println(okPositions.size());
