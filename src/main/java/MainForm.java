@@ -15,7 +15,7 @@ public class MainForm extends JDialog {
     private JButton peaksButton;
     private JScrollPane scrollTable;
     private DefaultTableModel modelIdeal;
-    private JTable idealsTable;
+    private JTable idealsTable, peaksComp;
     private JTextArea nameArea;
     private JButton addRowButton;
     private JButton removeButton;
@@ -42,7 +42,9 @@ public class MainForm extends JDialog {
         chooseFileButton.setText("Выберите файл");
         chooseFileButton.addActionListener(e -> chooseFileButtonPressed());
         peaksButton.addActionListener(e -> {
-            FindIntensity f = new FindIntensity(x, y);
+            addPeak();
+            //FindIntensity f = new FindIntensity(x, y);
+
         });
         graphicButton.setText("Показать/скрыть график");
         graphicButton.addActionListener(e -> {
@@ -59,10 +61,61 @@ public class MainForm extends JDialog {
         });
         makeTable();
     }
-    /*
+
+    private void addPeak() {
+        /*
+        try {
+            String input = JOptionPane.showInputDialog("Введите координаты начала и конца пика по Y, разделяя знаком \"/\"");
+            Object[] arrInput = input.split("/");
+            double begin = Double.parseDouble((String) arrInput[0]);
+            double end = Double.parseDouble((String) arrInput[1]);
+            double minElem = Double.MAX_VALUE, maxElem = Double.MIN_VALUE;
+            int posMin = 0, posMax = 0;
+            Vector<Integer> intX = new Vector<>();
+            for (int i = 0; i < x.size(); i++) {
+                intX.add((int) (Math.round(x.get(i))));
+            }
+            boolean trendDown = begin >= x.get(x.indexOf(begin) + 1);
+            int indOfBegin, indOfEnd;
+            if (!x.contains(begin)) {
+                indOfBegin = intX.indexOf(begin);
+                System.out.println(intX.contains(2060));
+            } else {
+                indOfBegin = x.indexOf(begin);
+            }
+            if(!x.contains(end)){
+                indOfEnd = intX.indexOf(end);
+                System.out.println(indOfBegin = intX.indexOf(end));
+            } else {
+                indOfEnd = x.indexOf(end);
+            }
+            for (int i = indOfBegin; i <indOfEnd; i++) {
+                if (trendDown) {
+                    if (x.get(i) < minElem) {
+                        minElem = x.get(i);
+                        posMin = i;
+                    }
+                } else {
+                    if (x.get(i) > maxElem) {
+                        maxElem = x.get(i);
+                        posMax = i;
+                    }
+                }
+            }
+            if (trendDown) {
+                secForm.getF().peaks.add(new Peak(indOfEnd, indOfBegin, posMin, minElem, true, x, y));
+            } else {
+                secForm.getF().peaks.add(new Peak(indOfEnd, indOfBegin, posMax, maxElem, false, x, y));
+            }
+            secForm.graphic();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Ошибка ввода! " + e.getMessage());
+      }*/
+    }
+/*
     private JTable makeCompareTable(){
         try {
-            var peaks = secForm.getF().getPeaks();
+            var peaks = secForm.getF().peaks;
         }
     }*/
 
@@ -110,16 +163,62 @@ public class MainForm extends JDialog {
         }
     }
 
+    private void makeCompareTable() {
+        try {
+            var peaks = secForm.getF().peaks;
+            DefaultTableModel peaksComparison = new DefaultTableModel();
+            peaksComparison.addColumn("НОМЕР ПИКА");
+            peaksComparison.addColumn("I(max)");
+            peaksComparison.addColumn("I(инт)");
+            peaksComparison.addColumn("v(эксп)");
+            peaksComparison.addColumn("v(этал)");
+            peaksComparison.addColumn("Отнесение полос");
+            for (var peak : peaks) {
+                Object[] row = new Object[]{peaks.indexOf(peak), peak.depth, peak.square,
+                        y.get(peak.indexExtremum), " ", " "};
+                for (int i = 0; i < modelIdeal.getRowCount(); i++) {
+                    try {
+                        String ideal = modelIdeal.getValueAt(i, 2).toString();
+                        if (ideal.contains("-")) {
+                            var splitted = ideal.split("-");
+                            if (y.get(peak.indexExtremum) > Integer.parseInt(splitted[0]) &&
+                                    y.get(peak.indexExtremum) < Integer.parseInt(splitted[1])) {
+                                row[4] = ideal;
+                                row[5] = modelIdeal.getValueAt(i, 3).toString();
+                                peaksComparison.addRow(row);
+                                break;
+                            }
+                        } else {
+                            if (y.get(peak.indexExtremum) == Integer.parseInt(ideal)) {
+                                row[4] = ideal;
+                                row[5] = modelIdeal.getValueAt(i, 3).toString();
+                                peaksComparison.addRow(row);
+                                break;
+                            }
+                        }
+
+                    } catch (Exception ignored) {
+                    }
+                }
+            }
+            peaksComp = new JTable(peaksComparison);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+    }
+
     private boolean exportToCSV() {
         try {
+            makeCompareTable();
+            var model = (DefaultTableModel) peaksComp.getModel();
             FileWriter csv = new FileWriter(new File("saved.csv"));
-            for (int i = 0; i < modelIdeal.getColumnCount(); i++) {
-                csv.write(modelIdeal.getColumnName(i) + ",");
+            for (int i = 0; i < model .getColumnCount(); i++) {
+                csv.write(model .getColumnName(i) + ",");
             }
             csv.write("\n");
-            for (int i = 0; i < modelIdeal.getRowCount(); i++) {
-                for (int j = 0; j < modelIdeal.getColumnCount(); j++) {
-                    csv.write(modelIdeal.getValueAt(i, j).toString() + ",");
+            for (int i = 0; i < model .getRowCount(); i++) {
+                for (int j = 0; j < model .getColumnCount(); j++) {
+                    csv.write(model .getValueAt(i, j).toString() + ",");
                 }
                 csv.write("\n");
             }
@@ -187,7 +286,7 @@ public class MainForm extends JDialog {
     private void graphic() {
         try {
             if (!graphicOpened) {
-                if(firstTimeOpened) {
+                if (firstTimeOpened) {
                     secForm = new GraphicJDialog(x, y, "TS-1P75.dat"); //TODO ПОМЕНЯТЬ НА ВЫБРАННЫЙ ГРАФИК
                     secForm.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
                     secForm.setResizable(true);

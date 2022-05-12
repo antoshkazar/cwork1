@@ -8,7 +8,7 @@ public class Peak {
     public boolean trendDown;
     public int indexBeginning;
     public int indexEnd, indexExtremum;
-    public double extremum, depth;
+    public double extremum, depth, square;
 
     public Peak(int indexEnd, int indexBeginning, int indexExtremum,
                 double extremum, boolean trendDown, Vector<Double> x, Vector<Double> y) {
@@ -22,8 +22,6 @@ public class Peak {
         this.y = y;
         findDepth();
     }
-
-    // точка пересечения
 
     boolean findDepth() {
         double x1 = y.get(indexBeginning);
@@ -40,18 +38,21 @@ public class Peak {
             double sn = (x3 - x4) + (y3 - y4) * q;
             if (sn == 0) {
                 return false;
-            }  // c(x) + c(y)*q
-            double fn = (x3 - x1) + (y3 - y1) * q;   // b(x) + b(y)*q
+            }
+            double fn = (x3 - x1) + (y3 - y1) * q;
             n = fn / sn;
         } else {
             if ((y3 - y4) == 0) {
                 return false;
-            }  // b(y)
-            n = (y3 - y1) / (y3 - y4);   // c(y)/b(y)
+            }
+            n = (y3 - y1) / (y3 - y4);
         }
-        double fx = x3 + (x4 - x3) * n;  // x3 + (-b(x))*n
-        double fy = y3 + (y4 - y3) * n;  // y3 +(-b(y))*n
+        double fx = x3 + (x4 - x3) * n;
+        double fy = y3 + (y4 - y3) * n;
         depth = Math.abs(fy - y3);
+        square = 0.5 * ((x.get(indexEnd) - x.get(indexBeginning)) * (y.get(indexExtremum) -
+                y.get(indexBeginning)) - (y.get(indexEnd) - y.get(indexBeginning)) * (
+                x.get(indexExtremum) - x.get(indexBeginning)));
         return true;
     }
 

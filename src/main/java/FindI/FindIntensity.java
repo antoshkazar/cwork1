@@ -15,10 +15,6 @@ public class FindIntensity {
         return okExtremumsX;
     }
 
-    public List<Peak> getPeaks() {
-        return peaks;
-    }
-
     public Vector<Double> getOkExtremumsY() {
         return okExtremumsY;
     }
@@ -107,10 +103,10 @@ public class FindIntensity {
                 }
             }
             // System.out.println(positions.size());
-            for (var peak : peaks) {
-                System.out.println(y.get(peak.indexBeginning) + " " + peak.depth);
+           // for (var peak : peaks) {
+             //   System.out.println(y.get(peak.indexBeginning) + " " + peak.depth + " " + peak.square);
                 // System.out.println(y.get(peak.indexBeginning) + " " + y.get(peak.indexEnd));
-            }
+            //}
             /*
             System.out.println(okPositions.size());
             System.out.println(okExtremumsX.size());

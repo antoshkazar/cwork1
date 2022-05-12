@@ -7,6 +7,7 @@ import org.jfree.chart.ui.RectangleInsets;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.util.Vector;
 
 public class GraphicJDialog extends JDialog {
@@ -30,9 +31,11 @@ public class GraphicJDialog extends JDialog {
 
     public void graphic() {
         try {
-            f = new FindIntensity(x, y);
+            if (f == null) {
+                f = new FindIntensity(x, y);
+            }
             DrawGraph d = new DrawGraph(x, y, filename, f.getOkExtremumsX(), f.getOkExtremumsY());
-            var dataset = d.createDataset(f.getPeaks());
+            var dataset = d.createDataset(f.peaks);
             if (dataset == null) {
                 JOptionPane.showMessageDialog(this, "Не удалось построить график!");
                 this.dispose();
