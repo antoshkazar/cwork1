@@ -31,6 +31,11 @@ public class DrawGraph {
         this.okextremumsY = okextremumsY;
     }
 
+    /**
+     * Создаем датасет из исходных данных и списка пиков.
+     * @param peaks список пиков
+     * @return датасет
+     */
     public XYDataset createDataset(List<Peak> peaks) {
         try {
             XYSeries xySeries = new XYSeries("ИК-спектр");
@@ -53,6 +58,11 @@ public class DrawGraph {
         return null;
     }
 
+    /**
+     * Создаем итоговый график
+     * @param dataset датасет
+     * @return график
+     */
     public JFreeChart createChart(XYDataset dataset) {
         JFreeChart chart;
         try {
