@@ -50,7 +50,7 @@ public class MainForm extends JDialog {
      * Обработчики событий.
      */
     private void addListeners() {
-        chooseFileButton.setText("Выберите файл");
+        chooseFileButton.setText("Выберите файл ");
         chooseFileButton.addActionListener(e -> chooseFileButtonPressed());
         peaksButton.addActionListener(e -> {
             addPeak();
