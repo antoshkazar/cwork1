@@ -7,7 +7,9 @@ import java.awt.*;
 import java.io.*;
 import java.util.Vector;
 
-
+/**
+ * Класс основного окна.
+ */
 public class MainForm extends JDialog {
     private JPanel contentPane;
     private JButton chooseFileButton;
@@ -23,10 +25,16 @@ public class MainForm extends JDialog {
     private JButton saveButton;
     private JButton returnButton;
     File fileWithData = null;
+    // Первая булевая переменная нужна для сокрытия формы с
+    // графиком при нажатии кнопки, вторая - для очистки таблицы с эталонами,
+    // третья - для проверки того, открывается ли график впервые
     boolean graphicOpened = false, cleared = false,
             firstTimeOpened = true;
+    // Вектор с исходными данными.
     Vector<Double> x = new Vector<>();
+    // Вектор с исходными данными.
     Vector<Double> y = new Vector<>();
+    // Окно с графиком.
     GraphicJDialog secForm;
 
     public MainForm() {
@@ -38,17 +46,18 @@ public class MainForm extends JDialog {
         addListeners();
     }
 
+    /**
+     * Обработчики событий.
+     */
     private void addListeners() {
         chooseFileButton.setText("Выберите файл");
         chooseFileButton.addActionListener(e -> chooseFileButtonPressed());
         peaksButton.addActionListener(e -> {
             addPeak();
-            //FindIntensity f = new FindIntensity(x, y);
-
         });
         graphicButton.setText("Показать/скрыть график");
         graphicButton.addActionListener(e -> {
-            getFileData(); //TODO УБРАТЬ
+            // getFileData();
             graphic();
         });
         addRowButton.addActionListener(e -> addRow());
@@ -62,8 +71,10 @@ public class MainForm extends JDialog {
         makeTable();
     }
 
+    /**
+     * Добавление информации о пике в таблицу.
+     */
     private void addPeak() {
-        /*
         try {
             String input = JOptionPane.showInputDialog("Введите координаты начала и конца пика по Y, разделяя знаком \"/\"");
             Object[] arrInput = input.split("/");
@@ -110,15 +121,12 @@ public class MainForm extends JDialog {
             secForm.graphic();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Ошибка ввода! " + e.getMessage());
-      }*/
+      }
     }
-/*
-    private JTable makeCompareTable(){
-        try {
-            var peaks = secForm.getF().peaks;
-        }
-    }*/
 
+    /**
+     * Очистка таблицы.
+     */
     private void clearTable() {
         try {
             if (modelIdeal != null) {
@@ -130,6 +138,9 @@ public class MainForm extends JDialog {
         }
     }
 
+    /**
+     * Удаление последнего ряда таблицы.
+     */
     private void removeRow() {
         try {
             if (modelIdeal != null) {
@@ -142,6 +153,9 @@ public class MainForm extends JDialog {
         }
     }
 
+    /**
+     * Добавление ряда в таблицу.
+     */
     private void addRow() {
         try {
             if (modelIdeal != null) {
@@ -163,6 +177,9 @@ public class MainForm extends JDialog {
         }
     }
 
+    /**
+     * Составление таблицы сравнения.
+     */
     private void makeCompareTable() {
         try {
             var peaks = secForm.getF().peaks;
@@ -207,18 +224,22 @@ public class MainForm extends JDialog {
         }
     }
 
+    /**
+     * Сохранение таблицы сравнений.
+     * @return
+     */
     private boolean exportToCSV() {
         try {
             makeCompareTable();
             var model = (DefaultTableModel) peaksComp.getModel();
             FileWriter csv = new FileWriter(new File("saved.csv"));
-            for (int i = 0; i < model .getColumnCount(); i++) {
-                csv.write(model .getColumnName(i) + ",");
+            for (int i = 0; i < model.getColumnCount(); i++) {
+                csv.write(model.getColumnName(i) + ",");
             }
             csv.write("\n");
-            for (int i = 0; i < model .getRowCount(); i++) {
-                for (int j = 0; j < model .getColumnCount(); j++) {
-                    csv.write(model .getValueAt(i, j).toString() + ",");
+            for (int i = 0; i < model.getRowCount(); i++) {
+                for (int j = 0; j < model.getColumnCount(); j++) {
+                    csv.write(model.getValueAt(i, j).toString() + ",");
                 }
                 csv.write("\n");
             }
@@ -230,6 +251,9 @@ public class MainForm extends JDialog {
         return false;
     }
 
+    /**
+     * Исходное заполнение таблицы.
+     */
     private void addRows() {
         try {
             if (cleared) {
@@ -272,6 +296,9 @@ public class MainForm extends JDialog {
         }
     }
 
+    /**
+     * Создание исходника таблицы с эталонами.
+     */
     private void makeTable() {
         modelIdeal = (DefaultTableModel) idealsTable.getModel();
         modelIdeal.addColumn("ЭТАЛОНЫ");
@@ -283,6 +310,9 @@ public class MainForm extends JDialog {
         cleared = false;
     }
 
+    /**
+     * Вызов окна для построения графика.
+     */
     private void graphic() {
         try {
             if (!graphicOpened) {
@@ -307,6 +337,9 @@ public class MainForm extends JDialog {
         }
     }
 
+    /**
+     * Чтение информации из выбранного файла.
+     */
     private void getFileData() {
         //if (fileWithDataName != null) {
         try {
@@ -320,10 +353,8 @@ public class MainForm extends JDialog {
                 y.add(Double.parseDouble(lines[0]));
                 line = reader.readLine();
             }
-            EventQueue.invokeLater(new Runnable() {
-                public void run() {
+            EventQueue.invokeLater(() -> {
 
-                }
             });
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Неудалось преобразовать данные!");
@@ -332,6 +363,9 @@ public class MainForm extends JDialog {
         //}
     }
 
+    /**
+     * Обработчик события нажатия кнопки выбора файла.
+     */
     private void chooseFileButtonPressed() {
         try {
             JFileChooser jFileChooser = new JFileChooser();

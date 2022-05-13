@@ -7,7 +7,6 @@ import org.jfree.chart.ui.RectangleInsets;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
 import java.util.Vector;
 
 public class GraphicJDialog extends JDialog {
@@ -29,12 +28,17 @@ public class GraphicJDialog extends JDialog {
         graphic();
     }
 
+    /**
+     * Построение графика.
+     */
     public void graphic() {
         try {
             if (f == null) {
+                // Поиск списка пиков.
                 f = new FindIntensity(x, y);
             }
             DrawGraph d = new DrawGraph(x, y, filename, f.getOkExtremumsX(), f.getOkExtremumsY());
+            // Создаем датасет с пиками и графиком.
             var dataset = d.createDataset(f.peaks);
             if (dataset == null) {
                 JOptionPane.showMessageDialog(this, "Не удалось построить график!");
@@ -48,6 +52,7 @@ public class GraphicJDialog extends JDialog {
                 return;
             }
             chart.setPadding(new RectangleInsets(4, 8, 2, 2));
+            // Создаем диаграмму.
             ChartPanel panel = new ChartPanel(chart);
             panel.setFillZoomRectangle(true);
             panel.setMouseWheelEnabled(true);
