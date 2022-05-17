@@ -57,7 +57,7 @@ public class MainForm extends JDialog {
         });
         graphicButton.setText("Показать/скрыть график");
         graphicButton.addActionListener(e -> {
-            // getFileData();
+            getFileData();
             graphic();
         });
         addRowButton.addActionListener(e -> addRow());
@@ -81,26 +81,16 @@ public class MainForm extends JDialog {
             double begin = Double.parseDouble((String) arrInput[0]);
             double end = Double.parseDouble((String) arrInput[1]);
             double minElem = Double.MAX_VALUE, maxElem = Double.MIN_VALUE;
-            int posMin = 0, posMax = 0;
-            Vector<Integer> intX = new Vector<>();
-            for (int i = 0; i < x.size(); i++) {
-                intX.add((int) (Math.round(x.get(i))));
+            int posMin = 0, posMax = 0, indOfBegin = 0, indOfEnd = 0;
+            for (int i = 0; i < y.size(); i++) {
+                if (y.get(i) == begin) {
+                    indOfBegin = i;
+                } else if (y.get(i) == end) {
+                    indOfEnd = i;
+                }
             }
             boolean trendDown = begin >= x.get(x.indexOf(begin) + 1);
-            int indOfBegin, indOfEnd;
-            if (!x.contains(begin)) {
-                indOfBegin = intX.indexOf(begin);
-                System.out.println(intX.contains(2060));
-            } else {
-                indOfBegin = x.indexOf(begin);
-            }
-            if(!x.contains(end)){
-                indOfEnd = intX.indexOf(end);
-                System.out.println(indOfBegin = intX.indexOf(end));
-            } else {
-                indOfEnd = x.indexOf(end);
-            }
-            for (int i = indOfBegin; i <indOfEnd; i++) {
+            for (int i = indOfBegin; i < indOfEnd; i++) {
                 if (trendDown) {
                     if (x.get(i) < minElem) {
                         minElem = x.get(i);
@@ -121,7 +111,7 @@ public class MainForm extends JDialog {
             secForm.graphic();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Ошибка ввода! " + e.getMessage());
-      }
+        }
     }
 
     /**
@@ -226,6 +216,7 @@ public class MainForm extends JDialog {
 
     /**
      * Сохранение таблицы сравнений.
+     *
      * @return
      */
     private boolean exportToCSV() {
