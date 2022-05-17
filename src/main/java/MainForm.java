@@ -57,7 +57,7 @@ public class MainForm extends JDialog {
         });
         graphicButton.setText("Показать/скрыть график");
         graphicButton.addActionListener(e -> {
-            getFileData();
+            // getFileData();
             graphic();
         });
         addRowButton.addActionListener(e -> addRow());
@@ -332,10 +332,10 @@ public class MainForm extends JDialog {
      * Чтение информации из выбранного файла.
      */
     private void getFileData() {
-        //if (fileWithDataName != null) {
+        if (fileWithData != null) {
         try {
-            //FileReader fr = new FileReader(fileWithDataName); //TODO исправить на получение файла из указанной директории
-            FileReader fr = new FileReader("src/main/java/TS-1P75.dat");
+            FileReader fr = new FileReader(fileWithData); //TODO исправить на получение файла из указанной директории
+           // FileReader fr = new FileReader("src/main/java/TS-1P75.dat");
             BufferedReader reader = new BufferedReader(fr);
             String line = reader.readLine();
             while (line != null) {
@@ -351,7 +351,7 @@ public class MainForm extends JDialog {
             JOptionPane.showMessageDialog(this, "Неудалось преобразовать данные!");
             ex.printStackTrace();
         }
-        //}
+        }
     }
 
     /**
