@@ -57,7 +57,7 @@ public class MainForm extends JDialog {
         });
         graphicButton.setText("Показать/скрыть график");
         graphicButton.addActionListener(e -> {
-            // getFileData();
+            getFileData();
             graphic();
         });
         addRowButton.addActionListener(e -> addRow());
@@ -149,7 +149,9 @@ public class MainForm extends JDialog {
     private void addRow() {
         try {
             if (modelIdeal != null) {
-                String input = JOptionPane.showInputDialog("Введите строку для таблицы, разделяя столбцы знаком \"/\"");
+                String input = JOptionPane.showInputDialog(null,
+                        "Введите строку для таблицы, разделяя столбцы знаком \"/\"",
+                        "Новый эталон", JOptionPane.INFORMATION_MESSAGE);
                 Object[] arrInput = input.split("/");
                 Integer.parseInt((String) arrInput[0]);
                 if (((String) arrInput[2]).contains("-")) {
@@ -186,17 +188,18 @@ public class MainForm extends JDialog {
                 for (int i = 0; i < modelIdeal.getRowCount(); i++) {
                     try {
                         String ideal = modelIdeal.getValueAt(i, 2).toString();
+                        var curExtremumInt = Math.round(y.get(peak.indexExtremum) / 5) * 5;
                         if (ideal.contains("-")) {
                             var splitted = ideal.split("-");
-                            if (y.get(peak.indexExtremum) > Integer.parseInt(splitted[0]) &&
-                                    y.get(peak.indexExtremum) < Integer.parseInt(splitted[1])) {
+                            if (curExtremumInt >= Integer.parseInt(splitted[0]) &&
+                                    curExtremumInt <= Integer.parseInt(splitted[1])) {
                                 row[4] = ideal;
                                 row[5] = modelIdeal.getValueAt(i, 3).toString();
                                 peaksComparison.addRow(row);
                                 break;
                             }
                         } else {
-                            if (y.get(peak.indexExtremum) == Integer.parseInt(ideal)) {
+                            if (curExtremumInt == Integer.parseInt(ideal)) {
                                 row[4] = ideal;
                                 row[5] = modelIdeal.getValueAt(i, 3).toString();
                                 peaksComparison.addRow(row);
@@ -241,6 +244,7 @@ public class MainForm extends JDialog {
         }
         return false;
     }
+// 12/νs(ТO4)/1470-1480/Симметричные валентные колебания внутри тетраэдров ТO4
 
     /**
      * Исходное заполнение таблицы.
@@ -332,10 +336,10 @@ public class MainForm extends JDialog {
      * Чтение информации из выбранного файла.
      */
     private void getFileData() {
-        if (fileWithData != null) {
+        //if (fileWithData != null) {
         try {
-            FileReader fr = new FileReader(fileWithData); //TODO исправить на получение файла из указанной директории
-           // FileReader fr = new FileReader("src/main/java/TS-1P75.dat");
+            //FileReader fr = new FileReader(fileWithData); //TODO исправить на получение файла из указанной директории
+            FileReader fr = new FileReader("src/main/java/TS-1P75.dat");
             BufferedReader reader = new BufferedReader(fr);
             String line = reader.readLine();
             while (line != null) {
@@ -351,7 +355,7 @@ public class MainForm extends JDialog {
             JOptionPane.showMessageDialog(this, "Неудалось преобразовать данные!");
             ex.printStackTrace();
         }
-        }
+        //}
     }
 
     /**
