@@ -87,15 +87,32 @@ public class FindIntensity {
                 }
                 // Добавляем пики в список.
                 if (trendDown) {
-                    System.out.println(okPositions.get(i) + " min " + minElem + " pos " + posMin);
+                    System.out.println(y.get(posMin) + " min " + minElem + " pos " + posMin);
                     if (okExtremumsX.get(i) - minElem > 0.005 && okExtremumsY.get(i + 1) - okExtremumsY.get(i) < 1000) {
-                        positions.add(okPositions.get(i));
-                        peaks.add(new Peak(okPositions.get(i + 1), okPositions.get(i), posMin, minElem, true, x, y));
+                        if (i > 1) {
+                            if (okExtremumsX.get(i - 1) - okExtremumsY.get(i) < 0.5) {
+                                positions.add(okPositions.get(i));
+                                peaks.add(new Peak(okPositions.get(i + 1), okPositions.get(i), posMin, minElem, true, x, y));
+                            }
+                        } else {
+                            positions.add(okPositions.get(i));
+                            peaks.add(new Peak(okPositions.get(i + 1), okPositions.get(i), posMin, minElem, true, x, y));
+                        }
+
                     }
                 } else {
+                    System.out.println(okPositions.get(i) + " max " + maxElem + " pos " + posMax);
                     if (maxElem - okExtremumsX.get(i) > 0.005 && okExtremumsY.get(i + 1) - okExtremumsY.get(i) < 1000) {
-                        positions.add(okPositions.get(i));
-                        peaks.add(new Peak(okPositions.get(i + 1), okPositions.get(i), posMax, maxElem, false, x, y));
+                        if (i > 1) {
+                            if (okExtremumsX.get(i - 1) - okExtremumsY.get(i) < 0.5) {
+                                positions.add(okPositions.get(i));
+                                peaks.add(new Peak(okPositions.get(i + 1), okPositions.get(i), posMax, maxElem, false, x, y));
+                            }
+                        } else {
+                            positions.add(okPositions.get(i));
+                            peaks.add(new Peak(okPositions.get(i + 1), okPositions.get(i), posMax, maxElem, false, x, y));
+                        }
+
                     }
                 }
             }
